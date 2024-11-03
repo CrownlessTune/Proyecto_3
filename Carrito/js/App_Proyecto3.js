@@ -2,51 +2,49 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 const cartList = document.querySelector('#lista-carrito tbody');
 const clearCartBtn = document.getElementById('vaciar-carrito');
 const addCartBtns = document.querySelectorAll('.agregar-carrito');
-const courseCards = document.querySelectorAll('.card');
 
-courseCards.forEach(card => {
-    const courseId = card.getAttribute('data-id');
-    const courseName = card.querySelector('h4').textContent;
-    const coursePrice = card.querySelector('.precio').textContent.split(' ')[0];
-    const courseImage = card.querySelector('.imagen-curso').src;
+const initializeCourseCards = () => {
+    const courseCards = document.querySelectorAll('.card');
 
-    const viewCourseBtn = document.createElement('button');
-    viewCourseBtn.textContent = 'Ver curso';
-    viewCourseBtn.classList.add('ver-curso');
-    
-    viewCourseBtn.style.backgroundColor = '#33c3f0';
-    viewCourseBtn.style.color = 'white';
-    viewCourseBtn.style.border = 'none';
-    viewCourseBtn.style.padding = '10px 15px';
-    viewCourseBtn.style.borderRadius = '5px';
-    viewCourseBtn.style.cursor = 'pointer';
-    viewCourseBtn.style.display = 'block';
-    viewCourseBtn.style.margin = '10px auto';
-    viewCourseBtn.style.textAlign = 'center';
+    courseCards.forEach(card => {
+        const courseId = card.getAttribute('data-id');
+        const courseName = card.querySelector('h4').textContent;
+        const coursePrice = parseFloat(card.querySelector('.precio').textContent.split(' ')[0]);
+        const courseImage = card.querySelector('.imagen-curso').src;
 
-    card.appendChild(viewCourseBtn);
-
-    viewCourseBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const course = {
-            id: parseInt(courseId),
-            name: courseName,
-            price: parseFloat(coursePrice),
-            image: courseImage,
-        };
-        showCourseDetails(course);
+        const viewCourseBtn = createViewCourseButton(courseId, courseName, coursePrice, courseImage);
+        card.appendChild(viewCourseBtn);
     });
-});
+};
+
+const createViewCourseButton = (courseId, courseName, coursePrice, courseImage) => {
+    const btn = document.createElement('button');
+    btn.textContent = 'Ver curso';
+    btn.classList.add('ver-curso');
+    Object.assign(btn.style, {
+        backgroundColor: '#33c3f0',
+        color: 'white',
+        border: 'none',
+        padding: '10px 15px',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        display: 'block',
+        margin: '10px auto',
+        textAlign: 'center'
+    });
+
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showCourseDetails({ id: parseInt(courseId), name: courseName, price: coursePrice, image: courseImage });
+    });
+
+    return btn;
+};
 
 const addCourseToCart = (course) => {
-    const exists = cart.some(item => item.id === course.id);
-    if (exists) {
-        cart = cart.map(item => {
-            if (item.id === course.id) {
-                item.quantity++;
-            }
-            return item;
-        });
+    const existingCourse = cart.find(item => item.id === course.id);
+    if (existingCourse) {
+        existingCourse.quantity++;
     } else {
         cart.push({ ...course, quantity: 1 });
     }
@@ -62,9 +60,7 @@ const displayCart = () => {
             <td>${course.name}</td>
             <td>${course.price}€</td>
             <td>${course.quantity}</td>
-            <td>
-                <a href="#" class="remove-course" data-id="${course.id}">X</a>
-            </td>
+            <td><a href="#" class="remove-course" data-id="${course.id}">X</a></td>
         `;
         cartList.appendChild(row);
     });
@@ -81,15 +77,15 @@ const addRemoveEventListeners = () => {
     removeCourseBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const row = btn.parentElement.parentElement;
+            const row = btn.closest('tr');
             row.style.transition = "opacity 0.5s ease";
             row.style.opacity = "0"; 
             
             setTimeout(() => {
                 const courseId = parseInt(btn.getAttribute('data-id'));
-                cart = cart.filter(item => item.id !== courseId); 
+                cart = cart.filter(item => item.id !== courseId);
                 updateCart();
-            }, 500); 
+            }, 500);
         });
     });
 };
@@ -113,7 +109,7 @@ const showCourseDetails = (course) => {
     });
 };
 
-clearCartBtn.addEventListener('click', () => {
+const clearCart = () => {
     cartList.style.transition = "transform 0.5s ease";
     cartList.style.transform = "scale(0)"; 
 
@@ -122,26 +118,25 @@ clearCartBtn.addEventListener('click', () => {
         updateCart();
         cartList.style.transform = "scale(1)";
     }, 500);
-});
+};
 
-addCartBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const courseCard = btn.closest('.card');
-        const courseId = btn.getAttribute('data-id');
-        const courseName = courseCard.querySelector('h4').textContent;
-        const coursePrice = courseCard.querySelector('.precio').textContent.split(' ')[0];
-        const courseImage = courseCard.querySelector('.imagen-curso').src;
+const initializeEventListeners = () => {
+    clearCartBtn.addEventListener('click', clearCart);
+    
+    addCartBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const courseCard = btn.closest('.card');
+            const courseId = btn.getAttribute('data-id');
+            const courseName = courseCard.querySelector('h4').textContent;
+            const coursePrice = parseFloat(courseCard.querySelector('.precio').textContent.split(' ')[0]);
+            const courseImage = courseCard.querySelector('.imagen-curso').src;
 
-        const course = {
-            id: parseInt(courseId),
-            name: courseName,
-            price: parseFloat(coursePrice),
-            image: courseImage,
-        };
-
-        addCourseToCart(course);
+            addCourseToCart({ id: parseInt(courseId), name: courseName, price: coursePrice, image: courseImage });
+        });
     });
-});
+};
 
+initializeCourseCards();
+initializeEventListeners();
 displayCart();

@@ -1,23 +1,27 @@
 # Proyecto_3
 
-Carrito de Compras de Cursos Online
-Este proyecto es un carrito de compras para un sitio de cursos online, donde los usuarios pueden añadir cursos a su carrito, ver detalles de los cursos y gestionar su carrito de compras. Utiliza JavaScript y Local Storage para almacenar los datos del carrito.
+## Cambios Implementados
 
-Características
-Gestión de Carrito: Permite añadir, eliminar y vaciar cursos del carrito.
-Visualización de Cursos: Muestra una lista de cursos con sus precios y una opción para ver más detalles.
-Persistencia de Datos: Utiliza Local Storage para mantener el carrito incluso después de cerrar el navegador.
-Cambios Realizados
-Local Storage: Se ha implementado Local Storage para almacenar el carrito de compras. Esto permite que los usuarios mantengan su selección de cursos incluso si cierran el navegador o recargan la página.
+### 1. Uso de Local Storage
 
-Animaciones: Se han añadido animaciones suaves para la eliminación de cursos del carrito y al vaciar el carrito. Esto mejora la experiencia del usuario, proporcionando un feedback visual más atractivo al interactuar con los elementos.
+Se ha implementado el almacenamiento local (`localStorage`) para gestionar el carrito de compras. Esta funcionalidad permite a los usuarios mantener su selección de productos incluso después de cerrar el navegador o recargar la página. 
 
-Botón "Ver Curso": Se ha añadido un botón "Ver curso" en cada tarjeta de curso, que permite a los usuarios ver detalles del curso seleccionado. Este botón está diseñado para abrir un modal con la información del curso, haciendo que la navegación sea más intuitiva y accesible.
+- **Implementación**: 
+  - Al iniciar la aplicación, se verifica si hay un carrito guardado en el almacenamiento local. Si existe, se carga en la variable `cart`.
+  - Cada vez que se añade, modifica o elimina un producto del carrito, se actualiza el almacenamiento local con el nuevo estado del carrito, garantizando así que la información se conserve entre sesiones.
 
-Instalación
-Para ejecutar este proyecto, simplemente clona este repositorio y abre el archivo index.html en tu navegador. No se requieren dependencias adicionales.
+### 2. Animaciones
 
-Uso
-Navega por la lista de cursos y haz clic en "Ver curso" para obtener más información sobre un curso.
-Utiliza el botón "Añadir al carrito" para agregar cursos al carrito.
-Accede al carrito para revisar tus selecciones y proceder a la eliminación de cursos si lo deseas.
+Para mejorar la experiencia del usuario, se han añadido animaciones suaves que hacen que la interacción con el carrito sea más dinámica y agradable. 
+
+- **Implementación**:
+  - Al eliminar un producto del carrito, se aplica una transición de desvanecimiento en la fila correspondiente, lo que hace que el elemento se desvanezca antes de ser removido del DOM. Esto proporciona una respuesta visual clara y mejora la fluidez de la interfaz.
+  - Asimismo, al vaciar el carrito, se utiliza una animación de escala que hace que la lista de productos se reduzca a cero antes de limpiarla por completo, creando un efecto visual atractivo.
+
+### 3. Botón "Ver Curso"
+
+Se ha añadido un botón "Ver curso" en cada card de producto que permite a los usuarios acceder a detalles adicionales sobre cada curso.
+
+- **Implementación**:
+  - Este botón es creado dinámicamente y se coloca en la parte inferior de cada card de producto. Al hacer clic en él, se abre un modal que muestra información detallada, como el nombre del curso, su imagen y el precio.
+  - El modal se implementa de forma que cubre la pantalla con un fondo semitransparente, asegurando que la atención del usuario se centre en la información presentada. Además, se incluye un botón de cierre para permitir que el usuario regrese a la vista anterior fácilmente.
